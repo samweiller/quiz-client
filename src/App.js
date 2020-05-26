@@ -18,7 +18,8 @@ import InputLabel from '@material-ui/core/InputLabel';
 import ResponseListView from "./ResponseListView";
 
 // const ENDPOINT = "http://localhost:3000";
- const ENDPOINT = "https://mighty-cliffs-22449.herokuapp.com";
+//  const ENDPOINT = "https://27c8e2ba.ngrok.io";
+const ENDPOINT = "https://mighty-cliffs-22449.herokuapp.com";
 
 function App() {
   // const [response, setResponse] = useState("");
@@ -35,7 +36,7 @@ function App() {
   const [isRevealed, setReveal] = useState(false);
   const [isOwnerRevealed, setOwnerReveal] = useState(false);
   const [qOwner, setQOwner] = useState("")
-  const socket = io(ENDPOINT);
+  const socket = io(ENDPOINT,  {transports: ['websocket']});
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -112,6 +113,21 @@ function App() {
       setQOwner(data.owner)
       console.log(data.qContent);
       setCurrentQuestion(data.qContent)
+      setResponseList(data.clearedResponses)
+      setCurrentResponse("")
+      setSubmittedResponse("")
+      setReveal(false)
+      setOwnerReveal(false)
+    })
+
+    socket.on('clear content', (data) => {
+      console.log('new question received');
+      setQOwner("")
+      setResponseList(data.clearedResponses)
+      setCurrentResponse("")
+      setSubmittedResponse("")
+      setReveal(false)
+      setOwnerReveal(false)
     })
 
     // debug
@@ -160,8 +176,9 @@ function App() {
   const sendQuestion = (qContent, owner) => {
     socket.emit('send question', {qContent: qContent, owner: owner})
     // clearResponses()
-    setReveal(false)
+    // setReveal(false)
     setNextQuestion("")
+    // setOwnerReveal(false)
     console.log('sending new question');
   }
 
@@ -301,17 +318,19 @@ function App() {
           {currentQuestion}
         </Typography>
 
-        {(qOwner === name) &&
-        <Typography variant={"body"}>
-          This is your question!
-        </Typography>
-        }
+        <div style={{display: "flex", flexDirection: "column", paddingBottom: "5px"}}>
+          {(qOwner === name) &&
+          <Typography variant={"body"}>
+            This is your question!
+          </Typography>
+          }
 
-        {(submittedResponse !== "") &&
-        <Typography variant={"body"}>
-          Your Response: {submittedResponse}
-        </Typography>
-        }
+          {(submittedResponse !== "") &&
+          <Typography variant={"body"}>
+            Your Response: {submittedResponse}
+          </Typography>
+          }
+        </div>
         <form>
         <Toolbar>
           <TextField
