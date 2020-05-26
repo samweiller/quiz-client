@@ -18,7 +18,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import ResponseListView from "./ResponseListView";
 
 // const ENDPOINT = "http://localhost:3000";
- const ENDPOINT = "https://secure-inlet-34593.herokuapp.com";
+ const ENDPOINT = "https://mighty-cliffs-22449.herokuapp.com";
 
 function App() {
   // const [response, setResponse] = useState("");
